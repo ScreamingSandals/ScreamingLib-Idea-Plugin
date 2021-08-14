@@ -1,0 +1,40 @@
+<idea-plugin>
+    <id>org.screamingsandals.idea.ScreamingLib-Idea-Plugin</id>
+    <name>ScreamingLib-Idea</name>
+    <vendor email="info@screamingsandals.org" url="https://screamingsandals.org">ScreamingSandals</vendor>
+
+    <description>A plugin that adds new autocomplete features for ScreamingLib.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <completion.contributor
+                implementationClass="org.screamingsandals.idea.MinecraftTypesCompletionContributor"
+                language="JAVA"
+                order="first"
+        />
+        <localInspection language="JAVA"
+                         displayName="SDK: 'MaterialHolder.of(\'air\')' or similar used instead of 'MaterialMapping.getAir()'"
+                         groupPath="Java"
+                         groupBundle="messages.InspectionsBundle"
+                         groupKey="group.names.probable.bugs"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.screamingsandals.idea.inspections.GetAirShouldBeUsedInspection"/>
+        <localInspection language="JAVA"
+                         displayName="SDK: 'resolve()' method used instead of 'ofOptional()'"
+                         groupPath="Java"
+                         groupBundle="messages.InspectionsBundle"
+                         groupKey="group.names.probable.bugs"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="org.screamingsandals.idea.inspections.AlternativeMethodAvailableInspection"/>
+        <deadCode implementation="org.screamingsandals.idea.inspections.ScreamingLibAnnotationEntryPoint"/>
+    </extensions>
+
+    <actions>
+
+    </actions>
+</idea-plugin>
