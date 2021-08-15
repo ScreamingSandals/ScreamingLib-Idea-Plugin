@@ -32,6 +32,7 @@
                          level="WARNING"
                          implementationClass="org.screamingsandals.idea.inspections.AlternativeMethodAvailableInspection"/>
         <deadCode implementation="org.screamingsandals.idea.inspections.ScreamingLibAnnotationEntryPoint"/>
+        <applicationService serviceImplementation="org.screamingsandals.idea.components.AutocompletionTypes" />
     </extensions>
 
     <actions>
