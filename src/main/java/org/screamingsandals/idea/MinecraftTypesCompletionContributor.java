@@ -29,7 +29,7 @@ import static com.intellij.patterns.PsiJavaPatterns.psiMethod;
 
 public class MinecraftTypesCompletionContributor extends CompletionContributor {
     private static final String ANNOTATION = "org.screamingsandals.lib.utils.annotations.ide.CustomAutocompletion";
-    private static final String ARCTIC_DATA_URL = "https://raw.githubusercontent.com/Articdive/ArticData/master/Articdata/1.17.1/1_17_1_${category}.json";
+    private static final String ARCTIC_DATA_URL = "https://raw.githubusercontent.com/Articdive/ArticData/1.17.1/1_17_1_${category}.json";
 
     private final Map<String, List<LookupElement>> minecraftTypesCollections = new HashMap<>();
     private final Gson gson = new Gson();
