@@ -24,10 +24,13 @@ public class ScreamingLibAnnotationEntryPoint extends EntryPoint {
                 "org.screamingsandals.lib.utils.annotations.methods.OnDisable",
                 "org.screamingsandals.lib.utils.annotations.methods.OnEnable",
                 "org.screamingsandals.lib.utils.annotations.methods.OnPostEnable",
+                "org.screamingsandals.lib.utils.annotations.methods.OnPostConstruct",
                 "org.screamingsandals.lib.utils.annotations.methods.OnPreDisable",
                 "org.screamingsandals.lib.utils.annotations.methods.Provider",
                 "org.screamingsandals.lib.utils.annotations.methods.ShouldRunControllable",
-                "org.screamingsandals.lib.utils.annotations.methods.Plugin",
+                "org.screamingsandals.lib.utils.annotations.Plugin",
+                "org.screamingsandals.lib.utils.annotations.Service",
+                "org.screamingsandals.lib.utils.annotations.AbstractService",
                 "org.screamingsandals.lib.event.OnEvent"
         };
     }

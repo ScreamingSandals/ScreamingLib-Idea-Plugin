@@ -47,26 +47,39 @@ public class MinecraftTypesCompletionContributor extends CompletionContributor {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(false);
+                double base = 0.0625;
                 indicator.setFraction(0);
                 addNewMinecraftType(indicator, "MATERIAL", "items");
-                indicator.setFraction(0.1);
+                indicator.setFraction(base);
                 addNewMinecraftType(indicator, "ENCHANTMENT", "enchantments");
-                indicator.setFraction(0.2);
+                indicator.setFraction(base * 2);
                 addNewMinecraftType(indicator, "POTION_EFFECT", "potion_effects");
-                indicator.setFraction(0.3);
+                indicator.setFraction(base * 3);
                 addNewMinecraftType(indicator, "POTION", "potions");
-                indicator.setFraction(0.4);
+                indicator.setFraction(base * 4);
                 addNewMinecraftType(indicator, "EQUIPMENT_SLOT", List.of("main_hand", "off_hand", "boots", "leggings", "chestplate", "helmet"));
-                indicator.setFraction(0.5);
+                indicator.setFraction(base * 5);
                 addNewMinecraftType(indicator, "FIREWORK_EFFECT", List.of("small", "large", "star", "burst", "creeper"));
-                indicator.setFraction(0.6);
+                indicator.setFraction(base * 6);
                 addNewMinecraftType(indicator, "ENTITY_TYPE", "entities");
-                //indicator.setFraction(0.7);
+                //indicator.setFraction(base * 7);
                 //addNewMinecraftType("DAMAGE_CAUSE");
-                indicator.setFraction(0.8);
+                indicator.setFraction(base * 8);
                 addNewMinecraftType(indicator, "ATTRIBUTE_TYPE", "attributes");
-                indicator.setFraction(0.9);
+                indicator.setFraction(base * 9);
                 addNewMinecraftType(indicator, "GAME_MODE", List.of("survival", "creative", "adventure", "spectator"));
+                //indicator.setFraction(base * 10);
+                //addNewMinecraftType(indicator, "INVENTORY_TYPE");
+                indicator.setFraction(base * 11);
+                addNewMinecraftType(indicator, "ENTITY_POSE", List.of("standing", "fall_flying", "sleeping", "swimming", "spin_attack", "sneaking", "dying", "long_jumping"));
+                indicator.setFraction(base * 12);
+                addNewMinecraftType(indicator, "DIFFICULTY", List.of("peaceful", "easy", "normal", "hard"));
+                indicator.setFraction(base * 13);
+                addNewMinecraftType(indicator, "DIMENSION", "dimension_types");
+                indicator.setFraction(base * 14);
+                addNewMinecraftType(indicator, "BLOCK", "blocks"); // TODO: block states autocompletion
+                //indicator.setFraction(base * 15);
+                //addNewMinecraftType(indicator, "GAME_RULE");
 
                 indicator.setFraction(0.99);
                 indicator.setText("Registering autocompletion");

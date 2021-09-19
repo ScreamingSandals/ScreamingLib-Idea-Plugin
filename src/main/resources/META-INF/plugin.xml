@@ -16,14 +16,6 @@
                 order="first"
         />
         <localInspection language="JAVA"
-                         displayName="SDK: 'MaterialHolder.of(\'air\')' or similar used instead of 'MaterialMapping.getAir()'"
-                         groupPath="Java"
-                         groupBundle="messages.InspectionsBundle"
-                         groupKey="group.names.probable.bugs"
-                         enabledByDefault="true"
-                         level="WARNING"
-                         implementationClass="org.screamingsandals.idea.inspections.GetAirShouldBeUsedInspection"/>
-        <localInspection language="JAVA"
                          displayName="SDK: 'resolve()' method used instead of 'ofOptional()'"
                          groupPath="Java"
                          groupBundle="messages.InspectionsBundle"
