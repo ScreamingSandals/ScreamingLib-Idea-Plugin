@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.intellij.patterns.PlatformPatterns.*;
-import static com.intellij.patterns.PsiJavaPatterns.psiLiteral;
-import static com.intellij.patterns.PsiJavaPatterns.psiMethod;
+import static com.intellij.patterns.PsiJavaPatterns.*;
 
 public class MinecraftTypesCompletionContributor extends CompletionContributor {
     private static final String ANNOTATION = "org.screamingsandals.lib.utils.annotations.ide.CustomAutocompletion";
@@ -47,7 +45,7 @@ public class MinecraftTypesCompletionContributor extends CompletionContributor {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(false);
-                double base = 0.0625;
+                double base = 0.052631579;
                 indicator.setFraction(0);
                 addNewMinecraftType(indicator, "MATERIAL", "items");
                 indicator.setFraction(base);
@@ -80,6 +78,14 @@ public class MinecraftTypesCompletionContributor extends CompletionContributor {
                 addNewMinecraftType(indicator, "BLOCK", "blocks"); // TODO: block states autocompletion
                 //indicator.setFraction(base * 15);
                 //addNewMinecraftType(indicator, "GAME_RULE");
+                indicator.setFraction(base * 16);
+                addNewMinecraftType(indicator, "WEATHER", List.of("downfall", "clear"));
+                indicator.setFraction(base * 17);
+                addNewMinecraftType(indicator, "PARTICLE_TYPE", "particles");
+                indicator.setFraction(base * 18);
+                addNewMinecraftType(indicator, "SOUND", "sounds");
+                indicator.setFraction(base * 19);
+                addNewMinecraftType(indicator, "SOUND_SOURCE", "sound_sources");
 
                 indicator.setFraction(0.99);
                 indicator.setText("Registering autocompletion");
@@ -127,6 +133,30 @@ public class MinecraftTypesCompletionContributor extends CompletionContributor {
                         var name = ((JvmAnnotationEnumFieldValue) value).getFieldName();
 
                         var list = minecraftTypesCollections.get(name);
+                        if (list != null && !list.isEmpty()) {
+                            result.addAllElements(list);
+                            result.stopHere();
+                        }
+                    }
+                });
+
+                var adventurePattern = psiElement(JavaTokenType.STRING_LITERAL)
+                        .withParent(
+                                psiLiteral().methodCallParameter(
+                                        psiMethod()
+                                                .withName("key")
+                                                .withParameterCount(1)
+                                                .withParent(
+                                                        psiClass()
+                                                                .withQualifiedName("net.kyori.adventure.key.Key")
+                                                )
+                                )
+                        );
+
+                MinecraftTypesCompletionContributor.this.extend(CompletionType.BASIC, adventurePattern, new CompletionProvider<>() {
+                    @Override
+                    protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
+                        var list = minecraftTypesCollections.get("SOUND");
                         if (list != null && !list.isEmpty()) {
                             result.addAllElements(list);
                             result.stopHere();
