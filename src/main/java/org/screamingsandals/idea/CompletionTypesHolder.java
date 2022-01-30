@@ -1,17 +1,13 @@
 package org.screamingsandals.idea;
 
 import com.google.gson.Gson;
-import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.jvm.annotation.JvmAnnotationEnumFieldValue;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.psi.JavaTokenType;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.util.ProcessingContext;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.screamingsandals.idea.components.AutocompletionTypes;
 
@@ -21,24 +17,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static com.intellij.patterns.PsiJavaPatterns.*;
+public class CompletionTypesHolder {
+    public static final String ANNOTATION = "org.screamingsandals.lib.utils.annotations.ide.CustomAutocompletion";
+    private static final String ARCTIC_DATA_URL = "https://raw.githubusercontent.com/Articdive/ArticData/1.18.1/1_18_1_${category}.json";
+    @Getter
+    private static final CompletionTypesHolder instance = new CompletionTypesHolder();
 
-public class MinecraftTypesCompletionContributor extends CompletionContributor {
-    private static final String ANNOTATION = "org.screamingsandals.lib.utils.annotations.ide.CustomAutocompletion";
-    private static final String ARCTIC_DATA_URL = "https://raw.githubusercontent.com/Articdive/ArticData/1.17.1/1_17_1_${category}.json";
-
+    @Getter
     private final Map<String, List<LookupElement>> minecraftTypesCollections = new HashMap<>();
     private final Gson gson = new Gson();
     private final AutocompletionTypes types;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
-    public MinecraftTypesCompletionContributor() {
+    public CompletionTypesHolder() {
         types = ApplicationManager.getApplication().getService(AutocompletionTypes.class);
 
-        if (!"1.17.1".equals(types.version)) {
+        if (!"1.18.1".equals(types.version)) {
             types.ids = new HashMap<>();
-            types.version = "1.17.1";
+            types.version = "1.18.1";
         }
 
         ProgressManager.getInstance().run(new Task.Backgroundable(null, "Preparing minecraft types autocompletion") {
@@ -85,84 +85,27 @@ public class MinecraftTypesCompletionContributor extends CompletionContributor {
                 indicator.setFraction(base * 18);
                 addNewMinecraftType(indicator, "SOUND", "sounds");
                 indicator.setFraction(base * 19);
-                addNewMinecraftType(indicator, "SOUND_SOURCE", "sound_sources");
+                addNewMinecraftType(indicator, "SOUND_SOURCE", List.of("master", "music", "record", "weather", "block", "hostile", "neutral", "player", "ambient", "voice"));
 
                 indicator.setFraction(0.99);
                 indicator.setText("Registering autocompletion");
 
-                var pattern = psiElement(JavaTokenType.STRING_LITERAL)
-                        .withParent(
-                                psiLiteral().methodCallParameter(
-                                        psiMethod()
-                                                .withAnnotation(ANNOTATION)
-                                )
-                        );
+                latch.countDown();
+            }
+        });
+    }
 
-                MinecraftTypesCompletionContributor.this.extend(CompletionType.BASIC, pattern, new CompletionProvider<>() {
-                    @Override
-                    protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
-                        var f = parameters.getOriginalPosition();
-                        if (f == null) {
-                            return;
-                        }
+    public void whenPrepared(Runnable runnable) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(null, "Registering minecraft types autocompletion") {
 
-                        do {
-                            f = f.getParent();
-                            if (f == null) {
-                                return;
-                            }
-                        } while (!(f instanceof PsiMethodCallExpression));
-
-                        var method = ((PsiMethodCallExpression) f).resolveMethod();
-                        if (method == null) {
-                            return;
-                        }
-                        var annotated = method.getAnnotation(ANNOTATION);
-                        if (annotated == null) {
-                            return;
-                        }
-
-                        var attribute = annotated.findAttribute("value");
-                        if (attribute == null) {
-                            return;
-                        }
-                        var value = attribute.getAttributeValue();
-                        if (!(value instanceof JvmAnnotationEnumFieldValue)) {
-                            return;
-                        }
-                        var name = ((JvmAnnotationEnumFieldValue) value).getFieldName();
-
-                        var list = minecraftTypesCollections.get(name);
-                        if (list != null && !list.isEmpty()) {
-                            result.addAllElements(list);
-                            result.stopHere();
-                        }
-                    }
-                });
-
-                var adventurePattern = psiElement(JavaTokenType.STRING_LITERAL)
-                        .withParent(
-                                psiLiteral().methodCallParameter(
-                                        psiMethod()
-                                                .withName("key")
-                                                .withParameterCount(1)
-                                                .withParent(
-                                                        psiClass()
-                                                                .withQualifiedName("net.kyori.adventure.key.Key")
-                                                )
-                                )
-                        );
-
-                MinecraftTypesCompletionContributor.this.extend(CompletionType.BASIC, adventurePattern, new CompletionProvider<>() {
-                    @Override
-                    protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
-                        var list = minecraftTypesCollections.get("SOUND");
-                        if (list != null && !list.isEmpty()) {
-                            result.addAllElements(list);
-                            result.stopHere();
-                        }
-                    }
-                });
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runnable.run();
             }
         });
     }

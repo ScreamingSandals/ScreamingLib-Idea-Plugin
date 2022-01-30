@@ -15,7 +15,8 @@ repositories {
 intellij {
     version = '2021.3'
     plugins = [
-            'java'
+            'java',
+            'org.jetbrains.kotlin:213-1.6.10-release-923-IJ5744.223'
     ]
 }
 patchPluginXml {
